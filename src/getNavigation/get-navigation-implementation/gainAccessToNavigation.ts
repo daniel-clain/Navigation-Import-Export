@@ -1,5 +1,5 @@
 import * as puppeteer from 'puppeteer'
-import { getState, setState } from '../getNavigation.state'
+import state from '../getNavigation.state'
 
 let shopifyPartnersUrl = 'https://partners.shopify.com/118389/apps'
 let partnersLoginEmail = 'info@processcreative.com.au'
@@ -13,11 +13,11 @@ export const gainAccessToNavigation = async () => {
   const browser: puppeteer.Browser = await puppeteer
   .launch({headless: false, slowMo: 30});
   let page = await browser.newPage();
-  setState({page})
+  state.page = page
   
   browser.on('targetcreated', async (createdTarget: puppeteer.Target) => {
-    const xpage = await createdTarget.page()
-    if(xpage) setState({page: xpage})
+    const page = await createdTarget.page()
+    if(page) state.page = page
   })
 
   await loginToShopifyPartners()
@@ -26,8 +26,9 @@ export const gainAccessToNavigation = async () => {
     const targetIsShopifyAdmin = target.url().includes('myshopify.com/admin')
     return targetIsShopifyAdmin
   })
-  page = await shopifyAdminTarget.page()
-  setState({page})
+
+  state.page = await shopifyAdminTarget.page()
+  
   await accessNavigationView()
 
   return
@@ -61,7 +62,7 @@ export const gainAccessToNavigation = async () => {
     console.log('--- find store')
     const storeInputField = await page.$('#primary-nav-search-input')
     await storeInputField.focus()
-    await storeInputField.type(getState().storeName)
+    await storeInputField.type(state.storeName)
     const storeItem = await page.waitForSelector('.quick-search__item--is-active')
     
     console.log('--- select store')
@@ -78,12 +79,12 @@ export const gainAccessToNavigation = async () => {
   async function accessNavigationView(){
 
     console.log('--- go to navigation view')
-    const fullUrl = page.url()
+    const fullUrl = state.page.url()
     const endOfBaseUrl = 'myshopify.com/admin'
     const endOfBaseUrlIndex = fullUrl.indexOf(endOfBaseUrl) + endOfBaseUrl.length
     const baseUrl = fullUrl.slice(0, endOfBaseUrlIndex)
 
-    await page.goto(`${baseUrl}/menus/${getState().menuId}`)
+    await page.goto(`${baseUrl}/menus/${state.menuId}`)
     
   }
 

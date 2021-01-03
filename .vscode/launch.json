@@ -11,5 +11,12 @@
       "program": "${workspaceFolder}/dist/get-navigation/getNavigation",
       "console": "integratedTerminal"
     },  
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "copy",
+      "program": "${workspaceFolder}/dist/copyMenuFromStoreToStore",
+      "console": "integratedTerminal"
+    },
   ]
 }

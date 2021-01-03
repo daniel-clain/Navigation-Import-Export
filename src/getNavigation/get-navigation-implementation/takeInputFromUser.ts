@@ -1,11 +1,12 @@
 import * as readline from 'readline'
 import {hex} from 'chalk'
-import { setState } from '../getNavigation.state'
 const {stdin, stdout} = process
+import state from '../getNavigation.state'
 
 export const takeInputFromUser = async () => {  
   //const storeName = await getStoreName()
-  setState({storeName: 'Kirstin Ash (Australia)', menuId: 120447041615})
+  state.storeName = 'Kirstin Ash (Australia)'
+  state.menuId = '120447041615'
 }
 
 

@@ -1,12 +1,21 @@
 {
+  "scripts": {
+
+    "start": "tsc -w",
+
+    "copy": "node dist/copyMenuFromStoreToStore",
+
+    "get": "node dist/get-navigation/getNavigation",
+    "set": "node dist/set-navigation/setNavigation"
+    
+  },
+
+
+
   "name": "navigation-inport-export",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "start": "tsc -w",
-    "getNavigation": "node dist/get-navigation/getNavigation"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
