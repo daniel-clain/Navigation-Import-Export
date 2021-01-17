@@ -3,10 +3,10 @@
 
     "start": "tsc -w",
 
-    "copy": "node dist/copyMenuFromStoreToStore",
+    "copyMenu": "node -e 'require(`dist/copyMenu`)'",
 
-    "get": "node dist/get-navigation/getNavigation",
-    "set": "node dist/set-navigation/setNavigation"
+    "getMenu": "node dist/getMenu/getMenu run",
+    "setMenu": "node dist/setMenu/setMenu"
     
   },
 

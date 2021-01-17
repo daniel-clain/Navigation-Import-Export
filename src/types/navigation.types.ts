@@ -1,5 +1,5 @@
 
-export type NavData = {
+export type MenuData = {
   menus: Menu[]
 }
 

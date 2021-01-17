@@ -3,20 +3,36 @@
   // Hover to view descriptions of existing attributes.
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
-  "configurations": [    
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "setNavigation",
-      "program": "${workspaceFolder}/dist/get-navigation/getNavigation",
-      "console": "integratedTerminal"
-    },  
+  "configurations": [ 
     {
       "type": "node",
       "request": "launch",
       "name": "copy",
-      "program": "${workspaceFolder}/dist/copyMenuFromStoreToStore",
+      "program": "${workspaceFolder}/dist/copyMenu",
       "console": "integratedTerminal"
-    },
+    },   
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "getMenu",
+      "program": "${workspaceFolder}/dist/getMenu/getMenu",
+      "args": ["run"],
+      "console": "integratedTerminal"
+    },   
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "setMenu",
+      "program": "${workspaceFolder}/dist/setMenu/setMenu",
+      "args": ["run"],
+      "console": "integratedTerminal"
+    },   
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "tester",
+      "program": "${workspaceFolder}/dist/tester",
+      "console": "integratedTerminal"
+    }
   ]
 }

@@ -1,19 +1,18 @@
 import * as puppeteer from 'puppeteer'
-import state from '../getNavigation.state'
+import state from '../state'
 
 let shopifyPartnersUrl = 'https://partners.shopify.com/118389/apps'
 let partnersLoginEmail = 'info@processcreative.com.au'
 let partnersLoginPassword = 'TtQCnL&4=&n8z%3DT^CD'
  
 partnersLoginEmail = 'daniel@processcreative.com.au'
-partnersLoginPassword = 'Isadora3302' /**/
+partnersLoginPassword = 'danielsShopifyPassword' /**/
 
 
-export const gainAccessToNavigation = async () => {
+export const gainAccessToNavigation = async storeName => {
   const browser: puppeteer.Browser = await puppeteer
   .launch({headless: false, slowMo: 30});
-  let page = await browser.newPage();
-  state.page = page
+  state.page = await browser.newPage();
   
   browser.on('targetcreated', async (createdTarget: puppeteer.Target) => {
     const page = await createdTarget.page()
@@ -29,7 +28,6 @@ export const gainAccessToNavigation = async () => {
 
   state.page = await shopifyAdminTarget.page()
   
-  await accessNavigationView()
 
   return
 
@@ -37,55 +35,44 @@ export const gainAccessToNavigation = async () => {
 
   async function loginToShopifyPartners(){
     console.log('* Login To Shopify Partners')
-    await page.goto(shopifyPartnersUrl)
+    await state.page.goto(shopifyPartnersUrl)
 
     console.log('--- enter email')
-    const emailInputField = await page.$('#account_email')
+    const emailInputField = await state.page.$('#account_email')
     await emailInputField.focus()
     await emailInputField.type(partnersLoginEmail)
-    await page.waitForTimeout(100)
-    await (await page.$('button[type=submit]')).click()
+    await state.page.waitForTimeout(100)
+    await (await state.page.$('button[type=submit]')).click()
 
     console.log('--- enter password')
-    const passwordInputField = await page.waitForSelector('#account_password')
+    const passwordInputField = await state.page.waitForSelector('#account_password')
     await passwordInputField.focus()
     await passwordInputField.type(partnersLoginPassword)
-    await page.waitForTimeout(100)
-    await (await page.$('button[type=submit]')).click()
+    await state.page.waitForTimeout(100)
+    await (await state.page.$('button[type=submit]')).click()
   }
 
 
   async function findStoreAndLogin(){   
-    await page.waitForNavigation({
+    await state.page.waitForNavigation({
       waitUntil: 'domcontentloaded',
     });
     console.log('--- find store')
-    const storeInputField = await page.$('#primary-nav-search-input')
+    const storeInputField = await state.page.$('#primary-nav-search-input')
     await storeInputField.focus()
-    await storeInputField.type(state.storeName)
-    const storeItem = await page.waitForSelector('.quick-search__item--is-active')
+    await storeInputField.type(storeName)
+    const storeItem = await state.page.waitForSelector('.quick-search__item--is-active')
     
     console.log('--- select store')
     await storeItem.click()
-    await page.waitForSelector('#AppFrameMain',{
+    await state.page.waitForSelector('#AppFrameMain',{
       visible: true
     })
     console.log('--- login to store')
-    await page.waitForSelector('#AppFrameMain')
-    await page.$eval('#AppFrameMain a', (e: HTMLElement) => e.click());
+    await state.page.waitForSelector('#AppFrameMain')
+    await state.page.$eval('#AppFrameMain a.ui-button--primary', (e: HTMLElement) => e.click());
 
   }
 
-  async function accessNavigationView(){
-
-    console.log('--- go to navigation view')
-    const fullUrl = state.page.url()
-    const endOfBaseUrl = 'myshopify.com/admin'
-    const endOfBaseUrlIndex = fullUrl.indexOf(endOfBaseUrl) + endOfBaseUrl.length
-    const baseUrl = fullUrl.slice(0, endOfBaseUrlIndex)
-
-    await page.goto(`${baseUrl}/menus/${state.menuId}`)
-    
-  }
 
 }

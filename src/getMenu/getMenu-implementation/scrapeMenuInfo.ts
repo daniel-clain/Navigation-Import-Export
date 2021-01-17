@@ -1,18 +1,31 @@
 import { ElementHandle } from "puppeteer";
-import { Link, NavItem } from "../../utility/navigation.types";
-import state from "../getNavigation.state";
+import { Link, NavItem } from "../../types/navigation.types";
+import state from "../../state";
+import { inputVariables } from "../../inputVariables.data";
 
 
-export const scrapeNavigationData = async () => {
+export const scrapeMenuInfo = async (): Promise<void> => {
   
+  await accessNavigationView()
   console.log('* start scraping')
 
-  const navData: NavItem[] = await scrapeData()
-
-  console.log('finished scraping')
+  state.navData = await scrapeData()
 }
 
 
+async function accessNavigationView(){
+
+  console.log('--- go to navigation view')
+  const fullUrl = state.page.url()
+  const endOfBaseUrl = 'myshopify.com/admin'
+  const endOfBaseUrlIndex = fullUrl.indexOf(endOfBaseUrl) + endOfBaseUrl.length
+  const baseUrl = fullUrl.slice(0, endOfBaseUrlIndex)
+  const {menuId} = inputVariables.fromStore
+  const goToUrl = `${baseUrl}/menus/${menuId}`
+  console.log('goToURl', goToUrl)
+  await state.page.goto(goToUrl)
+  
+}
 
 
 
@@ -20,8 +33,7 @@ const scrapeData = async (): Promise<NavItem[]> => {
 
   const navItemClass = 'js-menu-resource'
   const navListClass = 'menu__list-items'
-  const hasChildrenClass = 'menu__branch'  
-  const {page} = state
+  const hasChildrenClass = 'menu__branch'
 
   return recursivelyGetNavData(await getTopLevelItems())
 
@@ -74,8 +86,8 @@ const scrapeData = async (): Promise<NavItem[]> => {
 
   async function getTopLevelItems(): Promise<ElementHandle<Element>[]>{
     const selector = `.ui-type-container > .${navListClass} > .${navItemClass}`
-    await page.waitForSelector(selector)
-    const items = await page.$$(selector)
+    await state.page.waitForSelector(selector)
+    const items = await state.page.$$(selector)
     return items    
   }
 
@@ -83,52 +95,17 @@ const scrapeData = async (): Promise<NavItem[]> => {
   async function getNameAndLink(item: ElementHandle<Element>): Promise<{navItemName, link: Link}> {
     const editBtn = await item.$('.edit-button')
     await editBtn.click()
-    const navItemName = await page.$eval('#editMenuItemName', 
+    const navItemName = await state.page.$eval('#editMenuItemName', 
     (elem: HTMLInputElement) => elem.value)
 
-    const linkStringJson = await page.$eval('#editMenuItemLinkValue', 
+    const linkStringJson = await state.page.$eval('#editMenuItemLinkValue', 
     (elem: HTMLInputElement) => elem.value)
     const {title, menu_item_type} = JSON.parse(linkStringJson)
     const link: Link = {title, menu_item_type}
 
-    await page.$eval('#edit_a_menu_item_modal .ui-modal__secondary-actions .ui-button', (cancelButton: HTMLButtonElement) => {debugger; cancelButton.click()})
+    await state.page.$eval('#edit_a_menu_item_modal .ui-modal__secondary-actions .ui-button', (cancelButton: HTMLButtonElement) => {debugger; cancelButton.click()})
     console.log(`--- scraped data for ${title}`)
 
     return {navItemName, link}
   }
 }
-
-
-
-
-    /* const test2 = await item.evaluateHandle(x => {
-      console.log(x)
-      debugger
-      return x
-    })
-
-    const childItems = await page.evaluate(item => {
-      console.log(item)
-      debugger
-      const itemChildren: HTMLElement[] = Array.from(item.children)
-      const itemList = itemChildren.reduce((itemsList, child): HTMLElement => {
-        const hasSubNavClass = child.classList.contains('menu__list-items')
-        return itemsList || hasSubNavClass ? child : null
-      }, null)
-
-      const listChildren = <HTMLElement[]>Array.from(itemList.children)
-      const listsItems = listChildren.filter(child => {
-        console.log('k so')
-        return child.classList.contains('js-menu-resource')
-      })
-      return listsItems
-    }, item)
-    console.log(childItems) */
-    
-    /* return  item.evaluateHandle((itemElem: HTMLElement) => {
-      const itemsList = Array.from(item.children)
-      .find((child: HTMLElement) => child.classList.contains(navItemClass))
-
-      const listsItems = <HTMLElement[]>Array.from(itemsList.children).filter(child => child.classList.contains(navItemClass))
-
-    }) */
