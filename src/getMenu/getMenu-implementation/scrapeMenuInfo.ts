@@ -9,7 +9,10 @@ export const scrapeMenuInfo = async (): Promise<void> => {
   await accessNavigationView()
   console.log('* start scraping')
 
-  state.navData = await scrapeData()
+  state.menuData = {
+    name: inputVariables.fromStore.menuName,
+    nav: await scrapeData()
+  }
 }
 
 
@@ -20,10 +23,19 @@ async function accessNavigationView(){
   const endOfBaseUrl = 'myshopify.com/admin'
   const endOfBaseUrlIndex = fullUrl.indexOf(endOfBaseUrl) + endOfBaseUrl.length
   const baseUrl = fullUrl.slice(0, endOfBaseUrlIndex)
-  const {menuId} = inputVariables.fromStore
-  const goToUrl = `${baseUrl}/menus/${menuId}`
-  console.log('goToURl', goToUrl)
+  const goToUrl = `${baseUrl}/menus`
   await state.page.goto(goToUrl)
+  await state.page.waitForSelector('.menus-table a')
+  const menuItems = await state.page.$$('.menus-table a')
+  
+  for await (let menuItem of menuItems){
+    
+    const menuItemName = await (await menuItem.getProperty('innerText')).jsonValue()
+    if(menuItemName == inputVariables.fromStore.menuName){
+      await menuItem.click()
+      break
+    }
+  }
   
 }
 

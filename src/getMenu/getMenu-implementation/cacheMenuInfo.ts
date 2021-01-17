@@ -6,7 +6,7 @@ export default async () => {
   console.log('* caching menu info')
 
   const fileToWriteTo = "menuData.cache.json"
-  const dataToWrite = JSON.stringify(state.navData)
+  const dataToWrite = JSON.stringify(state.menuData)
 
   try{
     await fsPromises.writeFile(fileToWriteTo, dataToWrite)

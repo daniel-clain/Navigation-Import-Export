@@ -1,9 +1,9 @@
 export const inputVariables = {
   fromStore: {
     storeName: 'Kirstin Ash (Australia)', 
-    menuId: '120447041615'
+    menuName: '2020 - Main Menu'
   },
   toStore: {
-    storeName: 'Daniel Clain Sandbox'
+    storeName: 'Kirstin Ash (Europe)'
   }
 }

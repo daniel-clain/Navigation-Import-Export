@@ -1,9 +1,9 @@
 import { Page } from "puppeteer"
-import { NavItem } from "./types/navigation.types"
+import { MenuData } from "./types/navigation.types"
 
 class GetMenuState{
   page: Page
-  navData: NavItem[]
+  menuData: MenuData
 }
 
 let state: GetMenuState
