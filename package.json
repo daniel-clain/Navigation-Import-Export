@@ -1,8 +1,8 @@
 {
   "scripts": {
     "copyMenu": "ts-node src/copyMenu.ts",
-    "getMenu": "ts-node src/getMenu/getMenu.ts",
-    "setMenu": "ts-node src/setMenu/setMenu.ts"
+    "getMenu": "ts-node src/getMenu/getMenu.ts run",
+    "setMenu": "ts-node src/setMenu/setMenu.ts run"
 
   },
   "name": "navigation-inport-export",
