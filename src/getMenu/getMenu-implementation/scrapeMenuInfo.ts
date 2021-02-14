@@ -28,7 +28,7 @@ async function accessNavigationView(){
   await state.page.waitForSelector('.menus-table a')
   const menuItems = await state.page.$$('.menus-table a')
   
-  for await (let menuItem of menuItems){
+  for (let menuItem of menuItems){
     
     const menuItemName = await (await menuItem.getProperty('innerText')).jsonValue()
     if(menuItemName == inputVariables.fromStore.menuName){
@@ -109,14 +109,22 @@ const scrapeData = async (): Promise<NavItem[]> => {
     await editBtn.click()
     const navItemName = await state.page.$eval('#editMenuItemName', 
     (elem: HTMLInputElement) => elem.value)
+    
+    const linkTextSelector = '#edit_a_menu_item_modal .menu-item__link--selected__text'
 
+    await state.page.waitForSelector(linkTextSelector)
+    
+    const linkText = await state.page.$eval(linkTextSelector, 
+    (elem: HTMLInputElement) => elem.innerText)
+
+    
     const linkStringJson = await state.page.$eval('#editMenuItemLinkValue', 
     (elem: HTMLInputElement) => elem.value)
-    const {title, menu_item_type} = JSON.parse(linkStringJson)
-    const link: Link = {title, menu_item_type}
+    const linkCategory = JSON.parse(linkStringJson).menu_item_type
+    const link: Link = {linkText, linkCategory}
 
     await state.page.$eval('#edit_a_menu_item_modal .ui-modal__secondary-actions .ui-button', (cancelButton: HTMLButtonElement) => {debugger; cancelButton.click()})
-    console.log(`--- scraped data for ${title}`)
+    console.log(`--- scraped data for ${linkText}`)
 
     return {navItemName, link}
   }

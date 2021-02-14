@@ -2,13 +2,21 @@ import { inputVariables } from '../inputVariables.data'
 import { gainAccessToNavigation } from '../shared-implementation/gainAccessToMenus'
 import { createMenu } from './setMenu-implementation/createMenus'
 import getMenuData from './setMenu-implementation/getMenuData'
+import { saveMenu } from './setMenu-implementation/saveMenu'
 
 const {storeName} = inputVariables.toStore
 
 const setMenu = async () => {
-  await getMenuData()
-  await gainAccessToNavigation(storeName)
-  await createMenu()
+  try{
+    await getMenuData()
+    await gainAccessToNavigation(storeName)
+    await createMenu()
+    await saveMenu()
+  }
+  catch(e){
+    console.log('caught error')
+    console.log(e)
+  }
 }
 
 const nodeRunSetMenu = process.argv[2] == 'run'

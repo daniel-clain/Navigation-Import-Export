@@ -2,17 +2,17 @@ import { ElementHandle } from 'puppeteer'
 import state from '../../state'
 import { Link, NavItem } from '../../types/navigation.types'
 
-export const createMenu = async (): Promise<boolean> => {
+export const createMenu = async (): Promise<void> => {
   
   await accessNavigationView()
+
   console.log('* start creating menus')
-  console.log('menuData', state.menuData)
 
   await createBaseMenu()
   await recursivelyCreateMenuItems(state.menuData.nav)
 
+  console.log('* finished creating menus')
 
-  return await false
 }
 
 
@@ -38,43 +38,74 @@ const createBaseMenu = async () => {
 
 
 const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: ElementHandle<Element>) => {
-  const addButton = await state.page.$('.add-button')
-  const {page} = state
 
-  for await (let navItem of nav) {
+  for (let navItem of nav) {
     console.log(`--- creating nav item: ${navItem.navItemName}`)
-    await openAddModal()
+    const addButton = await state.page.$('.add-button')
+    await addButton.click()
     await putInItemName(navItem.navItemName)
     await putInItemLink(navItem.link)
     await saveNavItem()
+    
+    const navItemElement = await getNavItemElement(navItem.navItemName)
 
     if(parentElement){
-      await moveItemUnderParentNavItem(navItem.navItemName, parentElement)
+      await moveItemUnderParentNavItem(navItemElement, parentElement)
     }
 
     if(navItem.subNav){
-      const navItemElement = await getNavItemElement(navItem.navItemName)
       await recursivelyCreateMenuItems(navItem.subNav, navItemElement)
     }
+    console.log(`--- finished item ${navItem.navItemName}`)
+
   }
+
+}
+
+
 
   /* implementation */
 
 
-  async function moveItemUnderParentNavItem(navItemName, parentElement: ElementHandle<Element>){
+  async function moveItemUnderParentNavItem(navItemElement: ElementHandle<Element>, parentElement: ElementHandle<Element>){
     console.log(`--- moving item under parent element`)
+    const itemDragSelector = '.ui-sortable__handle'
+    const navItemDragElem = await navItemElement.$(itemDragSelector)
+    const dragElemBox = await navItemDragElem.boundingBox();
+    const dragBoxCenter = {
+      x: dragElemBox.x + dragElemBox.width / 2, 
+      y: dragElemBox.y + dragElemBox.height / 2
+    }
+
+    const parentBox = await parentElement.boundingBox()
+    const parentElemBottom = parentBox.y + parentBox.height
+
+    //const yDistance = dragBoxCenter.y - parentElemBottom
+    const aBitToTheRight = 20
+
+    const {page} = state
+
+    await page.mouse.move(dragBoxCenter.x, dragBoxCenter.y);
+    await page.mouse.down();
+    await page.mouse.move(aBitToTheRight, parentElemBottom);
+    await page.mouse.up();
+
+
   }
   
   async function getNavItemElement(navItemName): Promise< ElementHandle<Element>>{
     const navItemClass = '.js-menu-resource'
-    page.waitForSelector(navItemClass)
-    const navItems = await page.$$(navItemClass)
+    await state.page.waitForSelector(navItemClass)
+    const navItems = await state.page.$$(navItemClass)
 
     let navItemToReturn
 
-    for await (let navItem of navItems){
+    for (let navItem of navItems){
       const itemName = await navItem.$('.menu-item-name')
-      if(itemName == navItemName){
+      
+      const handle = await itemName.getProperty('innerText')
+      const navElemText = (await handle.jsonValue() as string)
+      if(navElemText == navItemName){
         navItemToReturn = navItem
         break;
       }
@@ -82,28 +113,24 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
     return navItemToReturn
   }
 
-  async function openAddModal(){
-    await addButton.click()
-
-  }
 
   async function putInItemName(navItemName){
-    const nameInput = await page.waitForSelector('#addMenuItemName')
+    const nameInput = await state.page.waitForSelector('#addMenuItemName')
     await nameInput.type(navItemName)
   }
 
   async function putInItemLink(link: Link){
-    const linkType = link.menu_item_type
-    const linkInput = await page.waitForSelector('#addMenuItemLink')
+    const linkType = link.linkCategory
+    const linkInput = await state.page.waitForSelector('#addMenuItemLink')
     if(linkType == 'http'){
       await linkInput.type('/')
       await state.page.$eval('#popover-dropdown-2 a', (addButton: HTMLButtonElement) => {addButton.click()})
     }
     else {
 
-      await linkInput.type(link.title)
-      await page.waitForTimeout(1000)
-      const linkOptions = await page.$$('#popover-dropdown-2 a')
+      await linkInput.type(link.linkText)
+      await state.page.waitForTimeout(1000)
+      const linkOptions = await state.page.$$('#popover-dropdown-2 a')
       
       for await (let option of linkOptions){
         const handle = await option.getProperty('innerText')
@@ -121,9 +148,9 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
           })
 
           
-          await page.waitForTimeout(1000)
+          await state.page.waitForTimeout(1000)
           const subLinkSelector = '.ui-url-browser__item .type--truncated'
-          const linkOptions2 = await page.$$(subLinkSelector)
+          const linkOptions2 = await state.page.$$(subLinkSelector)
 
           if(linkType == 'catalog'){
             await linkOptions2[0].evaluate((optionElem: 
@@ -139,8 +166,7 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
             for await (let option of linkOptions2){
               const handle = await option.getProperty('innerText')
               const optionText = await handle.jsonValue() as string
-              console.log(`option2 text ${optionText}`)
-              if(optionText == link.title){
+              if(optionText == link.linkText){
                 found = true
                 await option.evaluate((optionElem: 
                   HTMLAnchorElement) => {
@@ -150,13 +176,13 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
               }
             }
             if(!found){
-              console.log(`did not find matching link for ${link.title}`)
-              const nameInput = await page.waitForSelector('#addMenuItemName')
+              console.log(`did not find matching link for ${link.linkText}`)
+              const nameInput = await state.page.waitForSelector('#addMenuItemName')
               await nameInput.focus()
 
-              await page.waitForTimeout(1000)
+              await state.page.waitForTimeout(1000)
               await linkInput.type('/')
-              await page.waitForTimeout(1000)
+              await state.page.waitForTimeout(1000)
               await state.page.$eval('#popover-dropdown-2 a', (addButton: HTMLButtonElement) => {addButton.click()})
             }
           }
@@ -167,18 +193,14 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
       }
     }
 
-
-    
   }
 
   async function saveNavItem(){
     
-    const addBtn = await page.waitForSelector('#add_a_menu_item_modal .ui-modal__primary-actions button')
+    const addBtn = await state.page.waitForSelector('#add_a_menu_item_modal .ui-modal__primary-actions button')
     await addBtn.click()
-    await page.waitForTimeout(1000)
+    await state.page.waitForTimeout(1000)
     
   }
-
-}
 
 
