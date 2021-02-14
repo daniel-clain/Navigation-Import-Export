@@ -12,8 +12,8 @@ export type NavItem = {
 }
 
 export type Link = {
-  title: string
-  menu_item_type: string
+  linkText: string
+  linkCategory: string
 }
 
 /* 

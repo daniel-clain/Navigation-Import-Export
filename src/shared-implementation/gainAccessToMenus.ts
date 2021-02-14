@@ -1,12 +1,8 @@
 import * as puppeteer from 'puppeteer'
+import { inputVariables } from '../inputVariables.data';
 import state from '../state'
 
 let shopifyPartnersUrl = 'https://partners.shopify.com/118389/apps'
-let partnersLoginEmail = 'info@processcreative.com.au'
-let partnersLoginPassword = 'TtQCnL&4=&n8z%3DT^CD'
- 
-partnersLoginEmail = 'daniel@processcreative.com.au'
-partnersLoginPassword = 'danielsShopifyPassword' /**/
 
 
 export const gainAccessToNavigation = async storeName => {
@@ -40,14 +36,14 @@ export const gainAccessToNavigation = async storeName => {
     console.log('--- enter email')
     const emailInputField = await state.page.$('#account_email')
     await emailInputField.focus()
-    await emailInputField.type(partnersLoginEmail)
+    await emailInputField.type(inputVariables.partnersLoginEmail)
     await state.page.waitForTimeout(100)
     await (await state.page.$('button[type=submit]')).click()
 
     console.log('--- enter password')
     const passwordInputField = await state.page.waitForSelector('#account_password')
     await passwordInputField.focus()
-    await passwordInputField.type(partnersLoginPassword)
+    await passwordInputField.type(inputVariables.partnersLoginPassword)
     await state.page.waitForTimeout(100)
     await (await state.page.$('button[type=submit]')).click()
   }
