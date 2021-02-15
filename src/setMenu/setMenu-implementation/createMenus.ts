@@ -49,9 +49,9 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
     
     const navItemElement = await getNavItemElement(navItem.navItemName)
 
-    if(parentElement){
+    /* if(parentElement){
       await moveItemUnderParentNavItem(navItemElement, parentElement)
-    }
+    } */
 
     if(navItem.subNav){
       await recursivelyCreateMenuItems(navItem.subNav, navItemElement)
@@ -67,7 +67,7 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
   /* implementation */
 
 
-  async function moveItemUnderParentNavItem(navItemElement: ElementHandle<Element>, parentElement: ElementHandle<Element>){
+  /* async function moveItemUnderParentNavItem(navItemElement: ElementHandle<Element>, parentElement: ElementHandle<Element>){
     console.log(`--- moving item under parent element`)
     const itemDragSelector = '.ui-sortable__handle'
     const navItemDragElem = await navItemElement.$(itemDragSelector)
@@ -91,7 +91,7 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
     await page.mouse.up();
 
 
-  }
+  } */
   
   async function getNavItemElement(navItemName): Promise< ElementHandle<Element>>{
     const navItemClass = '.js-menu-resource'
@@ -138,7 +138,7 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
 
         if(
           optionText.includes('collections') && linkType == 'collection' ||
-          optionText.includes('products') && linkType == 'catalog' ||
+          optionText.includes('products') && (linkType == 'catalog' || linkType == 'product') ||
           optionText.includes('pages') && linkType == 'page' ||
           optionText.includes('blog posts') && linkType == 'blog'
         ){

@@ -1,4 +1,4 @@
-import { inputVariables } from '../inputVariables.data'
+import { inputVariables } from '../config/inputVariables.data'
 import { gainAccessToNavigation } from '../shared-implementation/gainAccessToMenus'
 import cacheMenuInfo from './getMenu-implementation/cacheMenuInfo'
 import { scrapeMenuInfo } from './getMenu-implementation/scrapeMenuInfo'

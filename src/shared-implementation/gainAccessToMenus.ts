@@ -1,5 +1,5 @@
 import * as puppeteer from 'puppeteer'
-import { inputVariables } from '../inputVariables.data';
+import { inputVariables } from '../config/inputVariables.data';
 import state from '../state'
 
 let shopifyPartnersUrl = 'https://partners.shopify.com/118389/apps'
@@ -7,7 +7,7 @@ let shopifyPartnersUrl = 'https://partners.shopify.com/118389/apps'
 
 export const gainAccessToNavigation = async storeName => {
   const browser: puppeteer.Browser = await puppeteer
-  .launch({headless: false, slowMo: 30});
+  .launch({headless: false, slowMo: 30, defaultViewport: null});
   state.page = await browser.newPage();
   
   browser.on('targetcreated', async (createdTarget: puppeteer.Target) => {
