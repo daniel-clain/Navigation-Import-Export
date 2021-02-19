@@ -1,6 +1,5 @@
 import * as puppeteer from 'puppeteer'
 import { Browser, LaunchOptions, Target } from 'puppeteer';
-import { inputVariables } from '../inputVariables.data';
 import state from '../state'
 
 let shopifyPartnersUrl = 'https://partners.shopify.com/118389/apps'
@@ -11,6 +10,7 @@ export const gainAccessToNavigation = async storeName => {
   if(inputVariables.showInBrowser){
     launchOptions.headless = false
     launchOptions.slowMo = 30
+    launchOptions.defaultViewport = null
   }
   if(!inputVariables.automateLogin){
     launchOptions.executablePath = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'

@@ -1,7 +1,7 @@
 import { ElementHandle } from "puppeteer";
 import { Link, NavItem } from "../../types/navigation.types";
 import state from "../../state";
-import { inputVariables } from "../../inputVariables.data";
+import { inputVariables } from "../../config/inputVariables.data";
 
 
 export const scrapeMenuInfo = async (): Promise<void> => {

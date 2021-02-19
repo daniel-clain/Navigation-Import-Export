@@ -1,4 +1,4 @@
-import { inputVariables } from '../inputVariables.data'
+import { inputVariables } from '../config/inputVariables.data'
 import { gainAccessToNavigation } from '../shared-implementation/gainAccessToMenus'
 import { createMenu } from './setMenu-implementation/createMenus'
 import getMenuData from './setMenu-implementation/getMenuData'
