@@ -4,34 +4,46 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [ 
+
+    
     {
       "type": "node",
       "request": "launch",
       "name": "copy",
-      "program": "${workspaceFolder}/dist/copyMenu",
+      "program": "${workspaceFolder}/src/copyMenu",
+      "runtimeArgs": ["-r","ts-node/register"],
       "console": "integratedTerminal"
-    },   
+    },      
+    
+
     {
       "type": "node",
       "request": "launch",
       "name": "getMenu",
-      "program": "${workspaceFolder}/dist/getMenu/getMenu",
+      "program": "${workspaceFolder}/src/getMenu/getMenu",
+      "runtimeArgs": ["-r","ts-node/register"],
       "args": ["run"],
       "console": "integratedTerminal"
-    },   
+    },    
+    
+
     {
       "type": "node",
       "request": "launch",
       "name": "setMenu",
-      "program": "${workspaceFolder}/dist/setMenu/setMenu",
+      "program": "${workspaceFolder}/src/setMenu/setMenu",
+      "runtimeArgs": ["-r","ts-node/register"],
       "args": ["run"],
       "console": "integratedTerminal"
     },   
+
+
     {
       "type": "node",
       "request": "launch",
       "name": "tester",
-      "program": "${workspaceFolder}/dist/tester",
+      "program": "${workspaceFolder}/src/tester",
+      "runtimeArgs": ["-r","ts-node/register"],
       "console": "integratedTerminal"
     }
   ]

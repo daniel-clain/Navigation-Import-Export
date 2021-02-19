@@ -1,11 +1,14 @@
 export const inputVariables = {
+  menuName: '2020 - Main Menu',
   fromStore: {
     storeName: 'Kirstin Ash (Australia)', 
-    menuName: '2020 - Main Menu'
+    storeUrl: ''
   },
   toStore: {
     storeName: 'Kirstin Ash (Europe)'//'Daniel Clain Sandbox'
   },  
   partnersLoginEmail: 'daniel@processcreative.com.au',
-  partnersLoginPassword: 'danielsShopifyPassword'
+  partnersLoginPassword: 'danielsShopifyPassword',
+  showInBrowser: true,
+  automateLogin: false
 }

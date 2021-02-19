@@ -1,4 +1,5 @@
 import * as puppeteer from 'puppeteer'
+import { Browser, LaunchOptions, Target } from 'puppeteer';
 import { inputVariables } from '../inputVariables.data';
 import state from '../state'
 
@@ -6,23 +7,37 @@ let shopifyPartnersUrl = 'https://partners.shopify.com/118389/apps'
 
 
 export const gainAccessToNavigation = async storeName => {
-  const browser: puppeteer.Browser = await puppeteer
-  .launch({headless: false, slowMo: 30});
+  const launchOptions: LaunchOptions = {}
+  if(inputVariables.showInBrowser){
+    launchOptions.headless = false
+    launchOptions.slowMo = 30
+  }
+  if(!inputVariables.automateLogin){
+    launchOptions.executablePath = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+    launchOptions.userDataDir = 'C:\\Users\\InsertUserNameHere\\AppData\\Local\\Google\\Chrome\\User Data'
+  }
+
+  const browser: Browser = await puppeteer.launch(launchOptions);
   state.page = await browser.newPage();
   
-  browser.on('targetcreated', async (createdTarget: puppeteer.Target) => {
+  browser.on('targetcreated', async (createdTarget: Target) => {
     const page = await createdTarget.page()
     if(page) state.page = page
   })
 
-  await loginToShopifyPartners()
-  await findStoreAndLogin()
-  const shopifyAdminTarget = await browser.waitForTarget(target => {
-    const targetIsShopifyAdmin = target.url().includes('myshopify.com/admin')
-    return targetIsShopifyAdmin
-  })
+  if(inputVariables.automateLogin){
+    await loginToShopifyPartners()
+    await findStoreAndLogin()
+    const shopifyAdminTarget = await browser.waitForTarget(target => {
+      const targetIsShopifyAdmin = target.url().includes('myshopify.com/admin')
+      return targetIsShopifyAdmin
+    })
 
-  state.page = await shopifyAdminTarget.page()
+    state.page = await shopifyAdminTarget.page()
+  }
+  else{
+    console.log('doing direct access');
+  }
   
 
   return

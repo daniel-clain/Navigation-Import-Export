@@ -86,9 +86,15 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
     const {page} = state
 
     await page.mouse.move(dragBoxCenter.x, dragBoxCenter.y);
+    await page.waitForTimeout(100);
     await page.mouse.down();
-    await page.mouse.move(aBitToTheRight, parentElemBottom);
+    await page.waitForTimeout(100);
+    await page.mouse.move(dragBoxCenter.x + aBitToTheRight, parentElemBottom);
+    await page.waitForTimeout(100);
     await page.mouse.up();
+    
+
+    console.log('done drop')
 
 
   }
@@ -127,8 +133,13 @@ const recursivelyCreateMenuItems = async (nav: NavItem[], parentElement?: Elemen
       await state.page.$eval('#popover-dropdown-2 a', (addButton: HTMLButtonElement) => {addButton.click()})
     }
     else {
-
-      await linkInput.type(link.linkText)
+      
+      if(link.linkText == 'All Products'){
+        await linkInput.type('products')
+      }
+      else{
+        await linkInput.type(link.linkText)
+      }
       await state.page.waitForTimeout(1000)
       const linkOptions = await state.page.$$('#popover-dropdown-2 a')
       
