@@ -1,7 +1,7 @@
 import { ElementHandle } from "puppeteer";
 import { Link, NavItem } from "../../types/navigation.types";
 import state from "../../state";
-import { inputVariables } from "../../config/inputVariables.data";
+import { variables } from "../../../config/variables";
 
 
 export const scrapeMenuInfo = async (): Promise<void> => {
@@ -10,7 +10,7 @@ export const scrapeMenuInfo = async (): Promise<void> => {
   console.log('* start scraping')
 
   state.menuData = {
-    name: inputVariables.fromStore.menuName,
+    name: variables.menuName,
     nav: await scrapeData()
   }
 }
@@ -31,7 +31,7 @@ async function accessNavigationView(){
   for (let menuItem of menuItems){
     
     const menuItemName = await (await menuItem.getProperty('innerText')).jsonValue()
-    if(menuItemName == inputVariables.fromStore.menuName){
+    if(menuItemName == variables.menuName){
       await menuItem.click()
       break
     }

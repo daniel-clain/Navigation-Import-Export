@@ -1,9 +1,9 @@
-import { inputVariables } from '../config/inputVariables.data'
+import { variables } from '../../config/variables'
 import { gainAccessToNavigation } from '../shared-implementation/gainAccessToMenus'
 import cacheMenuInfo from './getMenu-implementation/cacheMenuInfo'
 import { scrapeMenuInfo } from './getMenu-implementation/scrapeMenuInfo'
 
-const {storeName} = inputVariables.fromStore
+const {storeName} = variables.fromStore
 
 const getMenu = async () => {
   await gainAccessToNavigation(storeName)

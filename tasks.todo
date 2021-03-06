@@ -1,0 +1,6 @@
+Things:
+    ☐ after first login, save cookies, each time after, load cookies
+    ☐ if login button is in different place, catch first failed attempt and check 2nd place
+    ☐ 
+    ☐ trigger a hover affect on the target when trying to do drag & drop
+    ☐ test with urth international

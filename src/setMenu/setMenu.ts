@@ -1,10 +1,10 @@
-import { inputVariables } from '../config/inputVariables.data'
+import { variables } from '../../config/variables'
 import { gainAccessToNavigation } from '../shared-implementation/gainAccessToMenus'
 import { createMenu } from './setMenu-implementation/createMenus'
 import getMenuData from './setMenu-implementation/getMenuData'
 import { saveMenu } from './setMenu-implementation/saveMenu'
 
-const {storeName} = inputVariables.toStore
+const {storeName} = variables.toStore
 
 const setMenu = async () => {
   try{
